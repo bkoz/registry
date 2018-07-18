@@ -119,3 +119,5 @@ latest: digest: sha256:0873c923e00e0fd2ba78041bfb64a105e1ecb7678916d1f7776311e45
 [2] https://www.ibm.com/developerworks/library/l-docker-private-reg/index.html
 
 [3] https://docs.docker.com/registry/deploying/#get-a-certificate
+
+[4] https://access.redhat.com/solutions/1519813
