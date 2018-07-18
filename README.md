@@ -1,6 +1,8 @@
 # Private Docker registry setup on RHEL7.5
 ## 7/18/2018
 
+### These are crude unedited notes from a recent installation.
+
 ### Create the host-mounted directories used to persist the registry.
 
 #### This should be combined into a single directory.
