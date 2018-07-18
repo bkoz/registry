@@ -74,6 +74,12 @@ time="2018-07-17T21:54:38Z" level=info msg="response completed" go.version=go1.7
 10.0.0.3 - - [17/Jul/2018:21:54:38 +0000] "GET /v2/ HTTP/1.1" 200 2 "" "docker/1.13.1 go/go1.9.2 kernel/3.10.0-862.6.3.el7.x86_64 os/linux arch/amd64 UpstreamClient(Docker-Client/1.13.1 \\(linux\\))"
 ```
 
+#### Curl test
+
+```
+curl https://demo:demo@dist.example.com:8443/v2/
+```
+
 #### Push test
 
 ```
