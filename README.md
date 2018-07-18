@@ -96,7 +96,7 @@ latest: digest: sha256:0873c923e00e0fd2ba78041bfb64a105e1ecb7678916d1f7776311e45
 
 ```
 
-#### insecure test
+#### Insecure test
 
 ```
 docker run -p 5000:5000 --name registry -v /registry:/var/lib/registry -v /registry-certs:/certs -v /registry-auth:/auth  registry:2
