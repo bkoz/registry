@@ -124,7 +124,7 @@ systemctl restart atomic-openshift-node
 Create the image pull secret and link it to the default service account.
 
 ```
-oc create secret docker-registry dockerpullsecret     --docker-server=hostname.example.com:8443     --docker-username=demo     --docker-password=demo     --docker-email=bkozdemba@gmail.com
+oc create secret docker-registry dockerpullsecret --docker-server=hostname.example.com:8443 --docker-username=demo --docker-password=demo --docker-email=bkozdemba@gmail.com
 
 oc secrets link default dockerpullsecret --for=pull
 ```
