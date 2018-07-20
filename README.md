@@ -66,7 +66,7 @@ docker run --restart=always -d -p 5000:5000 --name registry --restart=always -v 
 #### Client configuration
 
 ```
-cp /registry/certs/domain-CA.crt /etc/pki/ca-trust/source/anchors/
+cp /registry/certs/domain-CA.crt /etc/pki/ca-trust/source/anchors/hostname-CA.example.com
 
 mv /etc/pki/ca-trust/source/anchors/domain-CA.crt /etc/pki/ca-trust/source/anchors/dist.example.com.
 crt
@@ -108,7 +108,28 @@ curl https://demo:demo@dist.example.com:8443/v2/
 {}
 ```
 
-#### Insecure test
+#### OpenShift Testing
+
+Perform the following on all masters/nodes:
+
+```
+cp domain-CA.crt /etc/pki/ca-trust/source/anchors/
+update-ca-trust extract
+systemctl restart docker
+systemctl restart atomic-openshift-master-controllers
+systemctl restart atomic-openshift-master-api
+systemctl restart atomic-openshift-node
+```
+
+Create the image pull secret and link it to the default service account.
+
+```
+oc create secret docker-registry dockerpullsecret     --docker-server=hostname.example.com:8443     --docker-username=demo     --docker-password=demo     --docker-email=bkozdemba@gmail.com
+
+oc secrets link default dockerpullsecret --for=pull
+```
+
+#### Insecure registry
 
 ```
 docker run -p 5000:5000 --name registry -v /registry:/var/lib/registry -v /registry-certs:/certs -v /registry-auth:/auth  registry:2
@@ -123,57 +144,11 @@ latest: digest: sha256:0873c923e00e0fd2ba78041bfb64a105e1ecb7678916d1f7776311e45
 
 # curl dist.example.com:5000/v2/
 ```
-#### OpenShift Testing
-
-Copied domain-CA.crt to all hosts and ran
-
-```
-update-ca-trust extract
-
-systemctl restart docker
-
-oc new-app dist.example.com:8443/alpine
-
-W0719 16:43:01.659494   25884 dockerimagelookup.go:220] Docker registry lookup failed: Get https://dist.example.com:8443/v2/: x509: certificate signed by unknown authority
-```
-
-Create the image pull secret and link it to the default service account.
-
-```
-oc create secret docker-registry dockerpullsecret     --docker-server=dist.example.com:8443     --docker-username=demo     --docker-password=demo     --docker-email=bkozdemba@gmail.com
-
-oc secrets link default dockerpullsecret --for=pull
-```
-
-Still received the x509 cert error above.
-
-Restarted master and node services and the x509 cert error went away.
-
-Left with the following error:
-
-```
-error: Errors occurred while determining argument types:
-
-dist.example.com:8443/alpine/latest as a Git repository URL:  bash: git-upload-pack: command not found
-fatal: Could not read from remote repository.
-
-Please make sure you have the correct access rights
-and the repository exists.
-
-dist.example.com:8443/alpine/latest as a local directory pointing to a Git repository:  stat dist.example.com:8443/alpine/latest: no such file or directory
-
-Errors occurred during resource creation:
-error: no match for "dist.example.com:8443/alpine/latest"
-```
-
-
 
 #### References
 
-[1] https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-14-04
+[1] https://docs.docker.com/registry/deploying/#get-a-certificate
 
-[2] https://www.ibm.com/developerworks/library/l-docker-private-reg/index.html
+[2] https://access.redhat.com/solutions/1519813
 
-[3] https://docs.docker.com/registry/deploying/#get-a-certificate
-
-[4] https://access.redhat.com/solutions/1519813
+[3] https://docs.openshift.com/container-platform/3.9/dev_guide/managing_images.html#using-image-pull-secrets
