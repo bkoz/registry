@@ -49,10 +49,11 @@ You should have the following (5) files created.
 domain-CA.crt  domain-CA.key  domain-CA.srl  domain.crt  hostname.example.com.csr
 ```
 
-#### Dump the cert to text.
+#### Dump cert info.
 
 ```
 openssl x509 -text -in  hostname.example.com.crt
+openssl crl2pkcs7 -nocrl -certfile cert.pem | openssl pkcs7 -print_certs -noout
 ```
 
 #### Create a self-signed cert in a single command.
