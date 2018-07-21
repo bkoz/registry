@@ -55,6 +55,12 @@ domain-CA.crt  domain-CA.key  domain-CA.srl  domain.crt  hostname.example.com.cs
 openssl x509 -text -in  hostname.example.com.crt
 ```
 
+#### Create a self-signed cert in a single command.
+
+```
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -sha256 -subj "/C=US/ST=Texas/L=Austin/O=Bob Kozdemba/OU=Net/CN=presto.eadgbe.net
+```
+
 #### Create a user/password and run the registry.
 
 ```
