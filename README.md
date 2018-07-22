@@ -14,7 +14,10 @@ chcon -R system_u:object_r:svirt_sandbox_file_t:s0 /registry
 ```
 
 ### Create the certificates
-#### Need to replace this step with LetsEncrypt certs.
+
+#### Use letsencript
+
+#### Self Signed
 
 ```
 cd /registry/certs
@@ -62,15 +65,18 @@ openssl crl2pkcs7 -nocrl -certfile cert.pem | openssl pkcs7 -print_certs -noout
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -sha256 -subj "/C=US/ST=Texas/L=Austin/O=Bob Kozdemba/OU=Net/CN=presto.eadgbe.net
 ```
 
-#### Create a user/password and run the registry.
+#### Open firewall ports, create a user/password and run the registry.
 
 ```
+firewall-cmd --add-port 8443/tcp
+firewall-cmd --add-port 8443/tcp --permanent
+
 htpasswd -Bbc /registry/auth/htpasswd demo demo
 
 docker run --restart=always -d -p 5000:5000 --name registry --restart=always -v /registry/registry:/var/lib/registry -v /registry/certs:/certs -v /registry/auth:/auth -e "REGISTRY_AUTH=htpasswd" -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd -e REGISTRY_HTTP_ADDR=0.0.0.0:443   -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain-CA.crt   -e REGISTRY_HTTP_TLS_KEY=/certs/domain-CA.key   -p 8443:443 registry:2
 ```
 
-#### Client configuration
+#### Client configuration (for self-signed certs)
 
 ```
 cp /registry/certs/domain-CA.crt /etc/pki/ca-trust/source/anchors/hostname-CA.example.com
@@ -110,7 +116,8 @@ latest: digest: sha256:0873c923e00e0fd2ba78041bfb64a105e1ecb7678916d1f7776311e45
 #### Curl test
 
 ```
-curl https://demo:demo@dist.example.com:8443/v2/
+curl https://demo:demo@dist.example.com:8443/v2/_catalog
+curl --user demo:demo https://reg.koz.redhatgov.io:8443/v2/_catalog
 
 {}
 ```
